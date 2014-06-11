@@ -1,5 +1,5 @@
 var List = require("../app/javascripts/list.js");
-
+var Node = require("../app/javascripts/node.js");
 
 
 describe("List", function(){
@@ -146,7 +146,8 @@ describe("List", function(){
       list.push(2);
       list.push(3);
       var secondToLast = list.tail.previous();
-      expect(secondToLast).toBe(list.tail)
+      list.pop();
+      expect(secondToLast).toBe(list.tail);
     });
 
     it("should return the old tail", function(){
@@ -159,14 +160,9 @@ describe("List", function(){
   describe("#head", function(){
     it("should return null if empty", function(){
       var list = new List();
-      expect(list.head()).toEqual(null);
+      expect(list.head).toEqual(null);
     });
 
-    it("should return first node.value when nonempty", function(){
-      var list = new List();
-      list.push(1);
-      expect(list.head()).toEqual(1);
-    });
   });
 
 
@@ -192,27 +188,10 @@ describe("List", function(){
       list = new List();
     });
 
-
-    it("should throw a RangeError if index is too large ", function(){
-      try{
-        list.insert(1,3);
-      } catch(e){
-        expect(e.constructor).toBe(RangeError)
-      }
-    });
-
-    it("should throw a RangeError if index is too small ", function(){
-      try{
-        list.insert(-1,1);
-      } catch(e){
-        expect(e.constructor).toBe(RangeError)
-      }
-    });
-
     it("should initialize head and tail for empty list", function(){
       list.insert(0,1);
       expect(list.head).toBe(list.tail);
-      expect(list.value).toBe(1);
+      expect(list.head.value).toBe(1);
     });
 
     it("should insert at beginning of list and update head and previous of old head", function(){
@@ -226,10 +205,10 @@ describe("List", function(){
 
     it("should insert between exisiting indicies and with appropriate 'next' and 'previous'",function(){
       list.push(1).push(3).push(4);
-      var old_node = list.head.next;
-      list.insert(1,2);
-      var new_node = list.head.next;
-      expect(new_node.value).toEqual(2);
+      var old_node = list.head.next; //old_node is the node that has the value 3
+      list.insert(1,2);            (1, 2, 3, 4)
+      var new_node = list.head.next; //new_node is the node that has the value 2
+      expect(new_node.value).toEqual(2); 
       expect(new_node.next).toBe(old_node)
       expect(new_node.previous()).toBe(list.head)
     });
@@ -245,9 +224,9 @@ describe("List", function(){
 
     it("should insert after last and update last",function(){
       list.push(1).push(2);
-      var old_node = list.node.next;
+      var old_node = list.head.next;
       list.insert(2,3);
-      var new_node = list.node.next.next;
+      var new_node = list.head.next.next;
       expect(new_node.value).toEqual(3);
       expect(list.tail).toBe(new_node);
       expect(list.tail.previous()).toBe(old_node);
@@ -269,7 +248,7 @@ describe("List", function(){
 
     it("should update head and tail for empty list", function(){
       list.unshift(1);
-      expect(list.head).toEqual(1);
+      expect(list.head.value).toEqual(1);
       expect(list.tail).toBe(list.head);
     });
 
@@ -313,10 +292,6 @@ describe("List", function(){
       list = new List();
     });
 
-    it("should throw a RangeError for indexes greater than length or less than 0", function(){
-      expect(list.setIndex(4,5)).toThrow();
-    });
-
     it("should add a node to an empty list", function(){
       list.setIndex(0,1);
       expect(list.head.value).toEqual(1);
@@ -324,7 +299,7 @@ describe("List", function(){
 
     it("should update head and tail for empty list", function(){
       list.setIndex(0,1);
-      expect(list.head).toEqual(1);
+      expect(list.head.value).toEqual(1);
       expect(list.tail).toBe(list.head);
     });
 
